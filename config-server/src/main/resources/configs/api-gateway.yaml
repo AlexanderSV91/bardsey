@@ -1,0 +1,46 @@
+server:
+  port: ${API_GATEWAY_PORT}
+
+spring:
+  application:
+    name: ${API_GATEWAY_NAME}
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  main:
+    web-application-type: reactive
+  docker:
+    compose:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    enabled: true
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+
+management:
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework: info
+    org.springframework.cloud.gateway: info
+  structured:
+    format:
+      console:

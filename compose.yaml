@@ -1,0 +1,158 @@
+services:
+  config-server:
+    image: config-server:3.4.5
+    container_name: config-server
+    build:
+      context: .
+      dockerfile: ./config-server/Dockerfile
+    restart: no
+    ports:
+      - ${CONFIG_SERVER_PORT}:${CONFIG_SERVER_PORT}
+    volumes:
+      - ../..:/workspaces:cached
+    #      - ./docker/config-server/keystore:/workspace/keystore
+    networks:
+      - spring-cloud-network
+    env_file:
+      - ./.env.docker
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+    #      ENCRYPT_KEYSTORE_LOCATION: /keystore/keystore.p12
+    #      ENCRYPT_KEYSTORE_ALIAS: compose
+    #      ENCRYPT_KEYSTORE_PASSWORD: w6egf6QA4hhjs7DHV_Py
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:${CONFIG_SERVER_PORT}/actuator/health || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  discovery-server:
+    image: discovery-server:3.4.5
+    container_name: discovery-server
+    build:
+      context: .
+      dockerfile: ./discovery-server/Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    ports:
+      - ${DISCOVERY_SERVER_PORT}:${DISCOVERY_SERVER_PORT}
+    volumes:
+      - ../..:/workspaces:cached
+    networks:
+      - spring-cloud-network
+    env_file:
+      - ./.env.docker
+    environment:
+      SPRING_PROFILES_ACTIVE: cloudconfig
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:${DISCOVERY_SERVER_PORT}/actuator/health || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  api-gateway:
+    image: api-gateway:3.4.5
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    ports:
+      - ${API_GATEWAY_PORT}:${API_GATEWAY_PORT}
+    volumes:
+      - ../..:/workspaces:cached
+    networks:
+      - spring-cloud-network
+    env_file:
+      - ./.env.docker
+    environment:
+      SPRING_PROFILES_ACTIVE: cloudconfig
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:${API_GATEWAY_PORT}/actuator/health || exit 1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  url-shortener-service:
+    image: url-shortener-service:3.4.5
+    container_name: url-shortener-service
+    build:
+      context: .
+      dockerfile: ./url-shortener-service/Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    ports:
+      - ${URL_SHORTENER_PORT}:${URL_SHORTENER_PORT}
+    volumes:
+      - ../..:/workspaces:cached
+    networks:
+      - spring-cloud-network
+    env_file:
+      - ./.env.docker
+    environment:
+      SPRING_PROFILES_ACTIVE: cloudconfig
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      api-gateway:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:17.5
+    container_name: db-postgres
+    restart: no
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-cloud-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+    env_file:
+      - ./.env.docker
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  pgadmin:
+    image: dpage/pgadmin4:8.14.0
+    container_name: pgadmin
+    restart: no
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+      - ./docker/pgadmin/pgpass:/pgadmin4/pgpass
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    entrypoint: /bin/sh -c "chmod 600 /pgadmin4/pgpass; /entrypoint.sh;"
+networks:
+  spring-cloud-network:
+    driver: bridge
+volumes:
+  postgres-data:
+  pgadmin_data:

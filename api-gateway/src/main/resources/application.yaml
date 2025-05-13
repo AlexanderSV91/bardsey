@@ -1,0 +1,78 @@
+server:
+  port: ${API_GATEWAY_PORT:8080}
+
+spring:
+  application:
+    name: ${API_GATEWAY_NAME:api-gateway}
+  profiles:
+    group:
+      dev-local:
+        - postgres
+        - local
+#    active: standalone
+  main:
+    web-application-type: reactive
+  docker:
+    compose:
+      enabled: false
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      enabled: false
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    enabled: true
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+
+management:
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework: info
+    org.springframework.cloud.gateway: info
+  structured:
+    format:
+      console:
+
+---
+spring:
+  config:
+    activate:
+      on-profile: standalone
+
+eureka:
+  client:
+    enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: cloudconfig
+  cloud:
+    config:
+      enabled: true
+      uri: ${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
+      name: ${API_GATEWAY_NAME}
+      profile: cloudconfig, git

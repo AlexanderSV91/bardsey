@@ -1,0 +1,80 @@
+server:
+  port: ${URL_SHORTENER_PORT:8081}
+
+spring:
+  application:
+    name: ${URL_SHORTENER_NAME:url-shortener-service}
+  profiles:
+    group:
+      dev-local:
+        - postgres
+        - local
+#    active: standalone
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DB_NAME:dbname}
+    username: ${POSTGRES_USERNAME:test}
+    password: ${POSTGRES_PASSWORD:test}
+  #  sql:
+  #    init:
+  #      schema-locations: classpath*:db/postgres/schema.sql
+  #      data-locations: classpath*:db/postgres/data.sql
+  #      mode: always
+  docker:
+    compose:
+      enabled: false
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    enabled: true
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+
+management:
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework: info
+  structured:
+    format:
+      console:
+
+---
+spring:
+  config:
+    activate:
+      on-profile: standalone
+
+eureka:
+  client:
+    enabled: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: cloudconfig
+  cloud:
+    config:
+      enabled: true
+      uri: ${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
+      name: ${URL_SHORTENER_NAME}
+      profile: cloudconfig, git

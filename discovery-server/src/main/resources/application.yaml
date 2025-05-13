@@ -1,0 +1,70 @@
+server:
+  port: ${DISCOVERY_SERVER_PORT:8761}
+
+spring:
+  application:
+    name: ${DISCOVERY_SERVER_NAME:discovery-server}
+  docker:
+    compose:
+      enabled: false
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      enabled: false
+#  profiles:
+#    active: standalone
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+
+management:
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework: info
+  structured:
+    format:
+      console:
+
+---
+spring:
+  config:
+    activate:
+      on-profile: standalone
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+    hostname: localhost
+#    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+---
+spring:
+  config:
+    activate:
+      on-profile: cloudconfig
+  cloud:
+    config:
+      enabled: true
+      uri: ${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT}
+      name: ${DISCOVERY_SERVER_NAME}
+      profile: cloudconfig, git
