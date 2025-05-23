@@ -2,7 +2,8 @@
 *
 
 # Include what we need
-!**/src
-!.mvn
-!**/pom.xml
-!mvnw
+#!**/src
+#!.mvn
+#!**/pom.xml
+#!mvnw
+!target/*.jar

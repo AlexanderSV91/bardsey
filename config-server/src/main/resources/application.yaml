@@ -12,9 +12,9 @@ spring:
         native:
           search-locations: classpath:configs
         git:
-          uri: ${GIT_URL}
+          uri: ${GIT_URL:https://github.com/AlexanderSV91/alboran-config}
           clone-on-start: true
-          default-label: ${GIT_DEFAULT_LABEL:master}
+          default-label: ${GIT_DEFAULT_LABEL:main}
   docker:
     compose:
       enabled: false

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#VERSION=3.4.5 ./scripts/pushImages.sh
+
 SERVICES=(
     "config-server"
     "discovery-server"

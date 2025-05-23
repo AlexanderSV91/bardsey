@@ -1,19 +1,59 @@
 server:
-  port: ${URL_SHORTENER_PORT}
+  port: ${URL_SHORTENER_PORT:8081}
 
 spring:
   application:
-    name: ${URL_SHORTENER_NAME}
+    name: ${URL_SHORTENER_NAME:url-shortener-service}
+  threads:
+    virtual:
+      enabled: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}/${POSTGRES_DB_NAME:dbname}
-    username: ${POSTGRES_USERNAME:test}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${POSTGRES_DB:url-shortener}
+    username: ${POSTGRES_USER:test}
     password: ${POSTGRES_PASSWORD:test}
-#  sql:
-#    init:
-#      schema-locations: classpath*:db/postgres/schema.sql
-#      data-locations: classpath*:db/postgres/data.sql
-#      mode: always
+    hikari:
+      minimum-idle: 0
+      maximum-pool-size: 30
+      max-lifetime: 900000
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      auto-commit: false
+      data-source-properties: #https://vladmihalcea.com/mysql-jdbc-statement-caching/
+        useServerPrepStmts: false
+        cachePrepStmts: false
+        prepStmtCacheSize: 500
+        prepStmtCacheSqlLimit: 1024
+  sql:
+    init:
+      schema-locations: classpath*:db/postgres/schema.sql
+      data-locations: classpath*:db/postgres/data.sql
+      mode: never
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 15
+        jdbc:
+          time_zone: UTC
+          batch_size: 15
+          order_insert: true
+          order_update: true
+          connection:
+            provider_disables_autocommit: true
+          query:
+            in_clause_parameter_padding: true
+            fail_on_pagination_over_collection_fetch: true
+            plan_cache_max_size: 4096
   docker:
     compose:
       enabled: false
@@ -21,7 +61,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     enabled: true
     fetch-registry: true
     register-with-eureka: true
@@ -29,6 +69,9 @@ eureka:
     instance-id: ${spring.application.name}:${random.uuid}
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
   info:
     java:
       enabled: true

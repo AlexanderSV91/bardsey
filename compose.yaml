@@ -3,25 +3,25 @@ services:
     image: config-server:3.4.5
     container_name: config-server
     build:
-      context: .
-      dockerfile: ./config-server/Dockerfile
+      context: ./config-server
+      dockerfile: ./Dockerfile
     restart: no
     ports:
-      - ${CONFIG_SERVER_PORT}:${CONFIG_SERVER_PORT}
+      - "8888:8888"
     volumes:
       - ../..:/workspaces:cached
     #      - ./docker/config-server/keystore:/workspace/keystore
     networks:
       - spring-cloud-network
     env_file:
-      - ./.env.docker
+      - docker.env
     environment:
       SPRING_PROFILES_ACTIVE: native
     #      ENCRYPT_KEYSTORE_LOCATION: /keystore/keystore.p12
     #      ENCRYPT_KEYSTORE_ALIAS: compose
     #      ENCRYPT_KEYSTORE_PASSWORD: w6egf6QA4hhjs7DHV_Py
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q --spider http://localhost:${CONFIG_SERVER_PORT}/actuator/health || exit 1" ]
+      test: [ "CMD-SHELL", "wget -q --spider http://config-server:8888/actuator/health || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -30,27 +30,27 @@ services:
     image: discovery-server:3.4.5
     container_name: discovery-server
     build:
-      context: .
-      dockerfile: ./discovery-server/Dockerfile
+      context: ./discovery-server
+      dockerfile: ./Dockerfile
     deploy:
       resources:
         limits:
           memory: 1024M
     ports:
-      - ${DISCOVERY_SERVER_PORT}:${DISCOVERY_SERVER_PORT}
+      - "8761:8761"
     volumes:
       - ../..:/workspaces:cached
     networks:
       - spring-cloud-network
     env_file:
-      - ./.env.docker
+      - docker.env
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig
     depends_on:
       config-server:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q --spider http://localhost:${DISCOVERY_SERVER_PORT}/actuator/health || exit 1" ]
+      test: [ "CMD-SHELL", "wget -q --spider http://discovery-server:8761/actuator/health || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -59,20 +59,20 @@ services:
     image: api-gateway:3.4.5
     container_name: api-gateway
     build:
-      context: .
-      dockerfile: ./api-gateway/Dockerfile
+      context: ./api-gateway
+      dockerfile: ./Dockerfile
     deploy:
       resources:
         limits:
           memory: 1024M
     ports:
-      - ${API_GATEWAY_PORT}:${API_GATEWAY_PORT}
+      - "8080:8080"
     volumes:
       - ../..:/workspaces:cached
     networks:
       - spring-cloud-network
     env_file:
-      - ./.env.docker
+      - docker.env
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig
     depends_on:
@@ -81,7 +81,7 @@ services:
       discovery-server:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "wget -q --spider http://localhost:${API_GATEWAY_PORT}/actuator/health || exit 1" ]
+      test: [ "CMD-SHELL", "wget -q --spider http://api-gateway:8080/actuator/health || exit 1" ]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -90,20 +90,20 @@ services:
     image: url-shortener-service:3.4.5
     container_name: url-shortener-service
     build:
-      context: .
-      dockerfile: ./url-shortener-service/Dockerfile
+      context: ./url-shortener-service
+      dockerfile: ./Dockerfile
     deploy:
       resources:
         limits:
           memory: 1024M
     ports:
-      - ${URL_SHORTENER_PORT}:${URL_SHORTENER_PORT}
+      - "8081:8081"
     volumes:
       - ../..:/workspaces:cached
     networks:
       - spring-cloud-network
     env_file:
-      - ./.env.docker
+      - docker.env
     environment:
       SPRING_PROFILES_ACTIVE: cloudconfig
     depends_on:
@@ -127,7 +127,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
     env_file:
-      - ./.env.docker
+      - docker.env
     healthcheck:
       test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 5s

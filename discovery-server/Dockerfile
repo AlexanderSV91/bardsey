@@ -1,11 +1,12 @@
-FROM bellsoft/liberica-runtime-container:jdk-24.0.1-cds-slim-musl AS builder
-WORKDIR /application
-COPY . .
-RUN --mount=type=cache,target=/root/.m2 chmod +x mvnw && ./mvnw clean install -Pdiscovery-server -Dmaven.test.skip
+#FROM bellsoft/liberica-runtime-container:jdk-24.0.1-cds-slim-musl AS builder
+#WORKDIR /application
+#COPY . .
+#RUN --mount=type=cache,target=/root/.m2 chmod +x mvnw && ./mvnw clean install -Pdiscovery-server -Dmaven.test.skip
 
 FROM bellsoft/liberica-runtime-container:jdk-24.0.1-cds-slim-musl AS layers
 WORKDIR /application
-COPY --from=builder /application/discovery-server/target/*.jar app.jar
+#COPY --from=builder /application/discovery-server/target/*.jar app.jar
+COPY target/*.jar app.jar
 RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
 FROM bellsoft/liberica-runtime-container:jre-24.0.1-cds-slim-musl

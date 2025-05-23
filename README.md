@@ -3,7 +3,6 @@
 # Getting Started
 
 Clone the repository and setup JDK 24 locally, using `sdkman` is a good alternative.
-Rename the `.env.example` file to be `.env`.
 
 ## Techs & Tools
 
