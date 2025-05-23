@@ -23,4 +23,5 @@ COPY --chown=appuser:appgroup --from=layers /application/extracted/application/ 
 
 RUN java -XX:ArchiveClassesAtExit=app.jsa -Dspring.context.exit=onRefresh -jar app.jar & exit 0
 
-ENTRYPOINT ["java","-XX:SharedArchiveFile=app.jsa","-jar","app.jar"]
+ENTRYPOINT ["java","-XX:SharedArchiveFile=app.jsa","-XX:+UnlockDiagnosticVMOptions",\
+            "-XX:+LogCompilation","-Xss256k","-Xms256M","-Xmx345M","-jar","app.jar"]
