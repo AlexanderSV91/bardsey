@@ -13,6 +13,8 @@ spring:
     active: cloudconfig
   main:
     web-application-type: reactive
+#  webflux:
+#    base-path: /
   docker:
     compose:
       enabled: false
