@@ -5,6 +5,10 @@ services:
     build:
       context: ./config-server
       dockerfile: ./Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     restart: no
     ports:
       - "8888:8888"
@@ -35,7 +39,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1024M
+          memory: 768M
     ports:
       - "8761:8761"
     volumes:

@@ -23,5 +23,7 @@ COPY --chown=appuser:appgroup --from=layers /application/extracted/application/ 
 
 RUN java -XX:ArchiveClassesAtExit=app.jsa -Dspring.context.exit=onRefresh -jar app.jar & exit 0
 
-ENTRYPOINT ["java","-XX:SharedArchiveFile=app.jsa","-XX:+UnlockDiagnosticVMOptions",\
-            "-XX:+LogCompilation","-Xss1M","-Xms512M","-Xmx1024M","-jar","app.jar"]
+ENTRYPOINT ["java","-XX:SharedArchiveFile=app.jsa","-XX:+UnlockDiagnosticVMOptions","-XX:+LogCompilation",\
+            "-XX:+HeapDumpOnOutOfMemoryError","-XX:+CrashOnOutOfMemoryError","-XX:+UseStringDeduplication",\
+            "-XX:+UseContainerSupport","-XX:MaxRAMPercentage=75.0","-XX:InitialRAMPercentage=75.0","-XX:MaxMetaspaceSize=179M",\
+            "-XX:+UseG1GC","-XX:MaxGCPauseMillis=200","-Xss1M","-Xms512M","-Xmx768M","-jar","app.jar"]
