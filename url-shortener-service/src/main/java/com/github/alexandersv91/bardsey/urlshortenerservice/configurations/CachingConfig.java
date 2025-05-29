@@ -1,6 +1,7 @@
 package com.github.alexandersv91.bardsey.urlshortenerservice.configurations;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.EnableCaching;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @Slf4j
 @Configuration
 @EnableCaching
+@ConditionalOnProperty(name = "feature.cache.enabled", havingValue = "true")
 public class CachingConfig {
 
     public final static String SHORT_URLS_CACHE = "shortUrls";

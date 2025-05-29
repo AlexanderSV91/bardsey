@@ -36,3 +36,7 @@ logging:
   structured:
     format:
       console:
+
+feature:
+  cache:
+    enabled: ${CACHE_ENABLE:true}

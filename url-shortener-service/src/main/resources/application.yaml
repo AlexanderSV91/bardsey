@@ -11,6 +11,8 @@ spring:
   threads:
     virtual:
       enabled: true
+#  main:
+#    lazy-initialization: true
   profiles:
 #    group:
 #      dev-local:
@@ -107,6 +109,10 @@ logging:
   structured:
     format:
       console:
+
+feature:
+  cache:
+    enabled: ${CACHE_ENABLE:true}
 
 ---
 spring:

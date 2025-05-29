@@ -7,7 +7,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(
+        scanBasePackages = "com.github.alexandersv91.bardsey.urlshortenerservice"
+//        exclude = {
+//                DataSourceAutoConfiguration.class,
+//                HibernateJpaAutoConfiguration.class
+//        }
+)
 public class UrlShortenerServiceApplication {
 
     public static void main(String[] args) {
