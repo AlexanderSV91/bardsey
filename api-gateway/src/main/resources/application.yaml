@@ -78,4 +78,4 @@ spring:
       enabled: true
       uri: ${CONFIG_SERVER_HOST:http://localhost}:${CONFIG_SERVER_PORT:8888}
       name: ${API_GATEWAY_NAME:${spring.application.name}}
-      profile: cloudconfig, git
+      profile: cloudconfig,git
