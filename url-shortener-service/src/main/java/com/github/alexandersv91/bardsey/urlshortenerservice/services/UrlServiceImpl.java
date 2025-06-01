@@ -3,7 +3,6 @@ package com.github.alexandersv91.bardsey.urlshortenerservice.services;
 import com.github.alexandersv91.bardsey.urlshortenerservice.dto.UrlRequest;
 import com.github.alexandersv91.bardsey.urlshortenerservice.entities.Url;
 import com.github.alexandersv91.bardsey.urlshortenerservice.exceptions.NotFoundShortenerUrlException;
-import com.github.alexandersv91.bardsey.urlshortenerservice.exceptions.UrlGenerationException;
 import com.github.alexandersv91.bardsey.urlshortenerservice.repositories.UrlRepository;
 import com.github.alexandersv91.bardsey.urlshortenerservice.utils.Base62Utils;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 import static com.github.alexandersv91.bardsey.urlshortenerservice.configurations.CachingConfig.SHORT_URLS_CACHE;
 import static lombok.AccessLevel.PRIVATE;
@@ -40,25 +41,25 @@ public class UrlServiceImpl implements UrlService {
     @Override
     @Transactional
     public Url createShortUrl(UrlRequest urlRequest) {
-        var originalUrl = this.urlRepository.findUrlByOriginalUrl(urlRequest.originalUrl());
-        if (originalUrl.isPresent()) {
-            return originalUrl.get();
+        if (Objects.isNull(urlRequest) || StringUtils.isBlank(urlRequest.originalUrl())) {
+            throw new IllegalArgumentException("Url cannot be blank");
         }
-        var url = Url.builder()
-                .originalUrl(urlRequest.originalUrl())
-                .shortUrl(this.getUniqueShortUrl())
-                .build();
-        return this.urlRepository.persist(url);
+        return this.urlRepository.persist(
+                Url.builder()
+                        .originalUrl(urlRequest.originalUrl())
+                        .shortUrl(Base62Utils.generateRandomBase62String())
+                        .build()
+        );
     }
 
-    private String getUniqueShortUrl() {
-        for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
-            String candidateUrl = Base62Utils.generateRandomBase62String();
-            if (!urlRepository.existsByShortUrl(candidateUrl)) {
-                return candidateUrl;
-            }
-        }
-        throw new UrlGenerationException("Failed to generate unique short URL after " + MAX_GENERATION_ATTEMPTS + " attempts");
-    }
+//    private String getUniqueShortUrl() {
+//        for (int attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {
+//            String candidateUrl = Base62Utils.generateRandomBase62String();
+//            if (!urlRepository.existsByShortUrl(candidateUrl)) {
+//                return candidateUrl;
+//            }
+//        }
+//        throw new UrlGenerationException("Failed to generate unique short URL after " + MAX_GENERATION_ATTEMPTS + " attempts");
+//    }
 
 }

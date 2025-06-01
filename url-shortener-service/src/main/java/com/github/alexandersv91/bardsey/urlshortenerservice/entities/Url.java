@@ -22,7 +22,15 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 @Entity(name = "Url")
-@Table(name = "urls")
+@Table(
+        name = "urls",
+        indexes = {
+                @Index(
+                        name = "idx_url_short_url_unq",
+                        columnList = "short_url"
+                )
+        }
+)
 public class Url implements Serializable {
 
     @Serial
@@ -34,7 +42,7 @@ public class Url implements Serializable {
     @Column(name = "id", nullable = false)
     Long id;
 
-    @Column(name = "original_url", unique = true, nullable = false)
+    @Column(name = "original_url", nullable = false)
     String originalUrl;
 
     @Column(name = "short_url", unique = true, nullable = false)
