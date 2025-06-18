@@ -1,8 +1,8 @@
 package com.github.alexandersv91.bardsey.urlshortenerservice.controllers;
 
 import com.github.alexandersv91.bardsey.urlshortenerservice.annotations.IpRateLimit;
-import com.github.alexandersv91.bardsey.urlshortenerservice.dto.UrlRequest;
-import com.github.alexandersv91.bardsey.urlshortenerservice.dto.UrlResponse;
+import com.github.alexandersv91.bardsey.urlshortenerservice.dtos.UrlRequest;
+import com.github.alexandersv91.bardsey.urlshortenerservice.dtos.UrlResponse;
 import com.github.alexandersv91.bardsey.urlshortenerservice.mappers.UrlMapper;
 import com.github.alexandersv91.bardsey.urlshortenerservice.services.UrlService;
 import jakarta.validation.Valid;

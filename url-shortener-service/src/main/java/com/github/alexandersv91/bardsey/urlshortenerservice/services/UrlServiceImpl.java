@@ -1,6 +1,6 @@
 package com.github.alexandersv91.bardsey.urlshortenerservice.services;
 
-import com.github.alexandersv91.bardsey.urlshortenerservice.dto.UrlRequest;
+import com.github.alexandersv91.bardsey.urlshortenerservice.dtos.UrlRequest;
 import com.github.alexandersv91.bardsey.urlshortenerservice.entities.Url;
 import com.github.alexandersv91.bardsey.urlshortenerservice.exceptions.NotFoundShortenerUrlException;
 import com.github.alexandersv91.bardsey.urlshortenerservice.repositories.UrlRepository;

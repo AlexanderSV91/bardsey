@@ -1,8 +1,8 @@
 package com.github.alexandersv91.bardsey.urlshortenerservice.mappers;
 
 import com.github.alexandersv91.bardsey.urlshortenerservice.configurations.MapperSpringConfig;
-import com.github.alexandersv91.bardsey.urlshortenerservice.dto.UrlRequest;
-import com.github.alexandersv91.bardsey.urlshortenerservice.dto.UrlResponse;
+import com.github.alexandersv91.bardsey.urlshortenerservice.dtos.UrlRequest;
+import com.github.alexandersv91.bardsey.urlshortenerservice.dtos.UrlResponse;
 import com.github.alexandersv91.bardsey.urlshortenerservice.entities.Url;
 import org.mapstruct.Mapper;
 

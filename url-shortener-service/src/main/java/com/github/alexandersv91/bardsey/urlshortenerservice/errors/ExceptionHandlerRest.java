@@ -1,4 +1,4 @@
-package com.github.alexandersv91.bardsey.urlshortenerservice.error;
+package com.github.alexandersv91.bardsey.urlshortenerservice.errors;
 
 import com.github.alexandersv91.bardsey.urlshortenerservice.exceptions.ExistsShortenerUrlException;
 import org.springframework.http.HttpHeaders;

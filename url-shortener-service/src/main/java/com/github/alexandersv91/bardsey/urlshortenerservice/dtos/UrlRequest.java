@@ -1,4 +1,4 @@
-package com.github.alexandersv91.bardsey.urlshortenerservice.dto;
+package com.github.alexandersv91.bardsey.urlshortenerservice.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
