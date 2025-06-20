@@ -22,9 +22,9 @@ spring:
     hikari:
       minimum-idle: 5
       maximum-pool-size: 30
-      idle-timeout: 30000
-      connection-timeout: 2000
-      max-lifetime: 900000
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
       transaction-isolation: TRANSACTION_READ_COMMITTED
       auto-commit: false
       data-source-properties: #https://vladmihalcea.com/mysql-jdbc-statement-caching/

@@ -6,10 +6,12 @@ spring:
     name: ${API_GATEWAY_NAME:api-gateway}
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
   main:
     web-application-type: reactive
   docker:
