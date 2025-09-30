@@ -2,7 +2,7 @@
 
 # Getting Started
 
-Clone the repository and setup JDK 24 locally, using `sdkman` is a good alternative.
+Clone the repository and setup JDK 25 locally, using `sdkman` is a good alternative.
 
 ## Techs & Tools
 

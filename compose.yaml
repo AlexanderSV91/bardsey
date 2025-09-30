@@ -1,6 +1,6 @@
 services:
   config-server:
-    image: config-server:3.5.0
+    image: config-server:3.5.6
     container_name: config-server
     build:
       context: ./config-server
@@ -31,7 +31,7 @@ services:
       retries: 3
       start_period: 10s
   discovery-server:
-    image: discovery-server:3.5.0
+    image: discovery-server:3.5.6
     container_name: discovery-server
     build:
       context: ./discovery-server
@@ -60,7 +60,7 @@ services:
       retries: 3
       start_period: 10s
   api-gateway:
-    image: api-gateway:3.5.0
+    image: api-gateway:3.5.6
     container_name: api-gateway
     build:
       context: ./api-gateway
@@ -91,7 +91,7 @@ services:
       retries: 3
       start_period: 10s
   url-shortener-service:
-    image: url-shortener-service:3.5.0
+    image: url-shortener-service:3.5.6
     container_name: url-shortener-service
     build:
       context: ./url-shortener-service
@@ -120,7 +120,7 @@ services:
       postgres:
         condition: service_healthy
   postgres:
-    image: postgres:17.5
+    image: postgres:18.0
     container_name: db-postgres
     restart: no
     ports:

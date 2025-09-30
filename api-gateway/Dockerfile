@@ -1,9 +1,9 @@
-FROM bellsoft/liberica-runtime-container:jre-24.0.1-cds-slim-musl AS layers
+FROM bellsoft/liberica-runtime-container:jre-25-cds-slim-musl AS layers
 WORKDIR /application
 COPY target/*.jar app.jar
 RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
-FROM bellsoft/liberica-runtime-container:jre-24.0.1-cds-slim-musl
+FROM bellsoft/liberica-runtime-container:jre-25-cds-slim-musl
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
     mkdir -p /application && chown -R appuser:appgroup /application
